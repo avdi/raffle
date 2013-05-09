@@ -1,3 +1,5 @@
 #!/usr/bin/env ruby
 
-puts "I'm line one!"
+entrants_file = ARGV[0]
+entrants = File.readlines(entrants_file).map(&:chomp)
+puts entrants.first
