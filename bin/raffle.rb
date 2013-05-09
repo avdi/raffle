@@ -2,15 +2,16 @@
 require 'optparse'
 require 'yaml/store'
 
-picker = ->(entrants) { entrants.sample }
+picker       = ->(entrants) { entrants.sample }
+winner_count = 1
 OptionParser.new do |opts|
   opts.on('--force i,j,k', Array, 'Force indexes of picks (for testing)') do
-    |value|
+  |value|
     picker = ->(entrants) { entrants[value.shift.to_i] }
   end
   opts.on('--winners', 'Print list of winners') do
     entrants_file = ARGV[0]
-    store = YAML::Store.new("#{entrants_file}.raffle")
+    store         = YAML::Store.new("#{entrants_file}.raffle")
     store.transaction do
       store['winners'] ||= {}
       store['winners'].each do |name, prize|
@@ -19,18 +20,24 @@ OptionParser.new do |opts|
     end
     exit
   end
+  opts.on('-n NUM_WINNERS', Integer, 'Number of winners to pick') do |value|
+    warn value
+    winner_count = value
+  end
 end.parse!
 
 entrants_file = ARGV[0]
 prize         = ARGV[1]
-store = YAML::Store.new("#{entrants_file}.raffle")
+store         = YAML::Store.new("#{entrants_file}.raffle")
 store.transaction do
   store['winners'] ||= {}
   entrants = File.readlines(entrants_file).map(&:chomp)
   store['winners'].keys.each do |winner|
     entrants.delete(winner)
   end
-  winner = picker.call(entrants)
-  store['winners'][winner] = prize
-  puts winner
+  winner_count.times do
+    winner                   = picker.call(entrants)
+    store['winners'][winner] = prize
+    puts winner
+  end
 end
