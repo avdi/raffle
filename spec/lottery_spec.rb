@@ -7,7 +7,7 @@ describe 'lottery app' do
   end
 
   specify 'choosing a single winner' do
-    run "raffle spec/5names 'POODR'"
+    run "raffle.rb spec/5names 'POODR'"
     expect(output_lines).to have(1).line
     expect(names_from('spec/5names')).to include(output_lines[0])
   end
@@ -15,7 +15,7 @@ describe 'lottery app' do
   specify 'randomness' do
     winners = []
     100.times do
-      run "raffle spec/5names 'POODR'"
+      run "raffle.rb spec/5names 'POODR'"
       winners << output_lines.first
       FileUtils.rm_f Dir.glob('spec/*.raffle')
     end
@@ -25,7 +25,16 @@ describe 'lottery app' do
   end
 
   specify 'remembering winners' do
-    run "raffle spec/5names 'POODR' --force '0,1,2,3,4'"
+    run "raffle.rb --force 0 spec/5names 'POODR'"
+    expect(output_lines.first).to eq('Deonte Labadie')
+    run "raffle.rb --winners spec/5names"
+    expect(output_lines.first).to match(/Deonte Labadie: POODR/)
+
+    run "raffle.rb --force 0 spec/5names 'SBPP'"
+    expect(output_lines.first).to eq('Kari Rohan')
+    run "raffle.rb --winners spec/5names"
+    expect(output_lines).to include('Deonte Labadie: POODR')
+    expect(output_lines).to include('Kari Rohan: SBPP')
   end
 
   def run(command)

@@ -1,5 +1,0 @@
-#!/usr/bin/env ruby
-
-entrants_file = ARGV[0]
-entrants = File.readlines(entrants_file).map(&:chomp)
-puts entrants.sample
