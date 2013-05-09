@@ -2,8 +2,11 @@
 require 'optparse'
 require 'yaml/store'
 require 'io/console'
+require 'securerandom'
 
-picker       = ->(entrants) { entrants.sample }
+picker       = ->(entrants) {
+  entrants[SecureRandom.random_number(entrants.size)]
+}
 winner_count = 1
 OptionParser.new do |opts|
   opts.on('--force i,j,k', Array, 'Force indexes of picks (for testing)') do
