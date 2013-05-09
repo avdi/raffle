@@ -2,4 +2,4 @@
 
 entrants_file = ARGV[0]
 entrants = File.readlines(entrants_file).map(&:chomp)
-puts entrants.first
+puts entrants.sample
