@@ -34,7 +34,8 @@ prize         = ARGV[1]
 store         = YAML::Store.new("#{entrants_file}.raffle")
 store.transaction do
   store['winners'] ||= {}
-  entrants         = File.readlines(entrants_file).map(&:chomp)
+
+  entrants = File.readlines(entrants_file).map(&:chomp)
   store['winners'].keys.each do |winner|
     entrants.delete(winner)
   end
